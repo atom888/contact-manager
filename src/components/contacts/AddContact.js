@@ -7,7 +7,8 @@ class AddContact extends Component {
   state = {
     name: "",
     email: "",
-    phone: ""
+    phone: "",
+    errors: {}
   };
 
   onChange = e => {
@@ -20,24 +21,39 @@ class AddContact extends Component {
     e.preventDefault();
     const { name, email, phone } = this.state;
 
-    const newContact = {
-      id: uuid(),
-      name,
-      email,
-      phone
-    };
+    // Check for Errors
+    if (name === "") {
+      this.setState({
+        errors: { name: "Name is required" }
+      });
+      return;
+    }
+    if (email === "") {
+      this.setState({
+        errors: { name: "Email is required" }
+      });
+      return;
+    }
+    if (phone === "") {
+      this.setState({
+        errors: { name: "Phone is required" }
+      });
+      return;
+    }
 
-    dispatch({ type: "ADD_CONTACT", payload: newContact });
+    dispatch({ type: "ADD_CONTACT", payload: { ...this.state, id: uuid() } });
 
+    // Clear State
     this.setState({
       name: "",
       email: "",
-      phone: ""
+      phone: "",
+      errors: {}
     });
   };
 
   render() {
-    const { name, email, phone } = this.state;
+    const { name, email, phone, errors } = this.state;
 
     return (
       <Consumer>
@@ -51,24 +67,27 @@ class AddContact extends Component {
                   <TextInputGroup
                     label="Name"
                     name="name"
+                    placeholder="Enter Name"
                     value={name}
-                    placeholder="Enter name..."
                     onChange={this.onChange}
+                    error={errors.name}
                   />
                   <TextInputGroup
                     label="Email"
                     name="email"
                     type="email"
-                    placeholder="Enter email..."
+                    placeholder="Enter Email"
                     value={email}
                     onChange={this.onChange}
+                    error={errors.email}
                   />
                   <TextInputGroup
                     label="Phone"
                     name="phone"
-                    placeholder="Enter phone..."
+                    placeholder="Enter Phone"
                     value={phone}
                     onChange={this.onChange}
+                    error={errors.phone}
                   />
                   <input
                     type="submit"
